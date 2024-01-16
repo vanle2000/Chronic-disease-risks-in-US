@@ -1,6 +1,5 @@
 # Uncovering Patterns and Predicting Chronic Disease Risks in the U.S​
 ​
-
 ## Here is the link to the Tableau interactive dashboard [Tableau - AirBbB in NYC Analytics](https://public.tableau.com/app/profile/nguyen.ho2733/viz/Airbnb_16840158070070/Dashboard3)
 
 ## 1. Problem Statement
