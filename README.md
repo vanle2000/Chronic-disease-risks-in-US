@@ -42,7 +42,6 @@ This dataset features indicators over 20 years of public health in the U.S., wit
 Followed by Data Processing, I employed random forest to classify risk level of chronic diseases and use it to predict the future patient status.
 
 ## 4. Conclusion
-<img width="1141" alt="Screen Shot 2023-05-14 at 10 19 46 PM" src="https://github.com/ChloeHo12/New-York-City-Airbnb-Price-Prediction/assets/98048503/4f2a70cc-ce0d-4338-b941-1852f40e9bd5">
 
 - `Low` and `Moderate` risk level, my model achieves perfect precision and recall on `Low` and nearly perfect on `Medium` which means the model can predict these classes without errors. The `High` risk level has slightly lower precision and recall but still performs fine. The `Very High` risk one has perfect precision, however, there are significant low for recall (0.33) which my model can correctly predict this class at 33% for true label. Its F1 score is also really low for this class compared to other classes, so it’s not-balance between precision and recall.  
 - The accuracy for random forest classifier 0.9999790308916904 (nearly perfect) is impressive. However, I think it might not be an ideal model since we have an unbalanced dataset, so this metric can be misleading. The `Low` class has a majority that outnumbers the other classes. The `Very High` risk level has only 3 instances, it is underrepresented in our data. I think this is why it has low recall.
