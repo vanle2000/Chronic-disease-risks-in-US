@@ -1,107 +1,51 @@
-# Uncovering Patterns and Predicting Chronic Disease Risks in the U.S.
-
-## Business Problem
-
-Chronic diseases are the leading cause of death and disability in the United States, accounting for 7 of the top 10 causes of mortality. Public health agencies face a critical challenge: with limited budgets and personnel, where should preventive resources be deployed first?
-
-This project addresses that question directly. Using 20 years of CDC surveillance data spanning all 50 U.S. states, I built a data-driven pipeline to **identify geographic outbreak clusters**, **predict mortality risk**, and **classify disease severity** — transforming a dense, multi-source public health dataset into actionable intelligence for resource allocation and policy intervention.
+# Chronic Disease Risk Intelligence: Predicting Outbreak Patterns Across the U.S.
 
 ---
 
-## Dataset
+## Case Study
 
-**Source:** [U.S. Chronic Disease Indicators (CDI)](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi) — CDC, CSTE, NACDD
+### Introduction
+Chronic diseases are the leading cause of death and disability in the United States, accounting for 7 of the top 10 causes of mortality and consuming 90% of the nation's $4.1 trillion annual healthcare spend. Public health agencies operate under severe resource constraints — they cannot intervene everywhere. The critical question is: **where do they intervene first, and for which diseases?**
 
-| Attribute | Detail |
-|-----------|--------|
-| Rows | 900,000+ surveillance records |
-| Time span | 2001 – 2021 (20 years) |
-| Geography | All 50 U.S. states + territories |
-| Disease topics | 17 categories |
-| Data sources | BRFSS, NVSS, Cancer Registries, CMS, YRBSS, and more |
+This project applies data mining and machine learning to 20 years of CDC surveillance data to answer that question — building a system that identifies geographic risk clusters, predicts mortality-linked outcomes, and classifies disease severity across all 50 states.
 
-**17 Disease Topics:** Alcohol · Arthritis · Asthma · Cancer · Cardiovascular Disease · Chronic Kidney Disease · COPD · Diabetes · Disability · Immunization · Mental Health · Nutrition & Weight · Older Adults · Oral Health · Reproductive Health · Tobacco · Overarching Conditions
+### Problem
+The U.S. Chronic Disease Indicators dataset is dense, multi-source, and high-cardinality. Raw records mix mortality statistics with survey percentages and clinical measurements in the same `DataValue` column. Geographic coverage is uneven — some states have robust surveillance infrastructure while others have systematic data gaps. Most critically, **the highest-risk populations are the least represented in the data**, making naive accuracy metrics dangerously misleading.
 
----
+The challenge was to build models that are honest about what they know and don't know, and that surface actionable signals rather than inflated performance numbers.
 
-## Methodology
+### Solution
+A three-stage pipeline: clean → explore → model.
 
-### 1. Data Cleaning & Feature Engineering
-- Parsed `GeoLocation` (WKT POINT format) into `Latitude` and `Longitude` for geospatial analysis
-- Imputed missing `DataValueUnit` values using within-group mode (`Topic` × `Question` groupby) — preserving domain context rather than applying global imputation
-- Engineered `DeadStatus` binary flag from `DataSource` field (mortality-linked sources: NVSS, Death Certificates)
-- Engineered `diseaseDuration` from `YearEnd − YearStart` to capture multi-year chronic burdens
-- One-hot encoded all 17 disease topics as indicator features for modeling
-- Removed low-signal columns (footnote fields, redundant confidence bounds)
+**Stage 1 — Data Cleaning & Feature Engineering (794K records)**
+- Parsed WKT `GeoLocation` strings into `Latitude` / `Longitude` for geospatial analysis
+- Imputed missing `DataValueUnit` using within-group mode by `Topic × Question` — preserving domain context rather than global imputation
+- Engineered `DeadStatus` (binary) from `DataSource` field: mortality-linked sources (NVSS, Death Certificates) = 1
+- Engineered `diseaseDuration` from `YearEnd − YearStart` to capture multi-year disease burden
+- One-hot encoded all 17 disease topics as indicator features
+- Dropped low-signal columns: footnote fields, redundant confidence bounds
 
-### 2. Exploratory Analysis
+**Stage 2 — Exploratory Analysis**
+- Geographic heatmap (state × year): data density spikes post-2015 reflect expanded CDC programs, not actual disease increases — a critical distinction that prevents modeling artifacts
+- Demographic breakdown by gender and race: persistent disparities in Diabetes and Cardiovascular Disease for Black, non-Hispanic populations
+- Topic trend analysis (2010–2021): Mental Health shows the steepest upward trajectory post-2016
 
-**Geographic distribution (state × year heatmap):** Identified that data density spikes post-2015 reflect expanded CDC surveillance programs, not actual disease increases — a critical distinction for modeling.
+**Stage 3 — Modeling**
+- **K-Means clustering (k=3):** Segmented states into three surveillance intensity tiers (Silhouette Score: 0.635)
+- **Logistic Regression:** Predicted `DeadStatus` (mortality-linked) using disease topic indicators, year, and duration
+- **Naive Bayes:** Benchmarked against Logistic Regression on the same task
+- **Random Forest classifier:** Classified records into 4 risk levels (Low / Moderate / High / Very High) based on `DataValueAlt` magnitude bins
 
-**Demographic breakdown:** Cancer and Cardiovascular Disease are disproportionately represented in male records; Mental Health and Reproductive Health show higher female indicator counts. Racial stratification reveals persistent disparities, particularly in Diabetes and Hypertension indicators for Black, non-Hispanic populations.
+### Results
 
-**Trend analysis (2010–2021):** Cancer has the highest surveillance frequency (127K+ records), while Mental Health indicators show the steepest upward trend post-2016 — consistent with known population-level shifts in mental health reporting.
+| Model | Task | Key Metric |
+|-------|------|-----------|
+| K-Means (k=3) | State clustering by surveillance intensity | Silhouette: **0.635** |
+| Logistic Regression | Mortality prediction (DeadStatus) | Accuracy: **0.77**, AUC: **0.73** |
+| Naive Bayes | Mortality prediction (DeadStatus) | Accuracy: 0.42 |
+| Random Forest | Risk level classification | Weighted F1: **1.00** (imbalanced), Macro F1: **0.85** |
 
-### 3. Geographic Clustering (K-Means)
-Applied K-Means (k=3) on state-level disease frequency vectors to segment states into surveillance intensity tiers.
-
-- **Silhouette Score: 0.635** — well-separated clusters
-- High-frequency states (dense surveillance infrastructure) vs. low-frequency states (limited reporting capacity) vs. mid-tier
-- Insight: Low surveillance states are not necessarily low-risk — they may represent data gaps requiring targeted investment
-
-### 4. Mortality Risk Prediction (Logistic Regression vs. Naive Bayes)
-
-**Target:** `DeadStatus` (binary: mortality-linked data source = 1)
-
-**Features:** YearStart, disease topic indicators (Arthritis, Cancer, Cardiovascular Disease, Chronic Kidney Disease, Tobacco, Nutrition), disease duration
-
-| Model | Accuracy | ROC-AUC | Notes |
-|-------|----------|---------|-------|
-| Logistic Regression | 0.77 | 0.73 | Best overall balance, interpretable coefficients |
-| Naive Bayes | 0.42 | — | Assumes feature independence — violated here |
-
-**Key finding:** Cardiovascular Disease, Cancer, and Tobacco indicators have the strongest positive correlation with `DeadStatus`. Logistic Regression coefficients directly confirm what epidemiological literature has long established — validating the pipeline's integrity.
-
-### 5. Risk Level Classification (Random Forest)
-
-**Target:** `RiskLevel` — 4-tier classification derived from `DataValueAlt` magnitude:
-
-| Risk Level | DataValue Range | Records |
-|------------|----------------|---------|
-| Low | 0 – 100,000 | Majority |
-| Moderate | 100,001 – 250,000 | ~180 |
-| High | 250,001 – 500,000 | ~27 |
-| Very High | 500,001 – 701,437 | 3 |
-
-**Random Forest Results:**
-- **Test Accuracy: 0.9999** — Note: this figure is dominated by the heavily imbalanced `Low` class (238K records vs. 3 `Very High`). Raw accuracy is misleading here.
-- **Weighted F1: 1.00** for `Low`; **F1: 0.50** for `Very High` (recall = 0.33 on 3 samples)
-- The model performs strongly on well-represented classes. `Very High` risk detection requires oversampling (SMOTE) or threshold tuning — a documented limitation and area for future work.
-- **Macro-average F1: 0.85** — more honest representation of multi-class performance
-
-**Feature importance:** `DataValue` magnitude, disease duration, and `DeadStatus` are the top predictors — consistent with domain knowledge.
-
----
-
-## Key Insights
-
-1. **Cancer dominates surveillance volume** (127K+ records) but cardiovascular disease carries higher per-record mortality association in the model
-2. **States cluster into three distinct tiers** by reporting density — gaps in low-surveillance states are a public health blind spot
-3. **Post-2016 Mental Health surge** is the fastest-growing indicator category, suggesting emerging resource reallocation needs
-4. **Tobacco and Cardiovascular Disease co-occurrence** is the strongest dual predictor of mortality-linked outcomes
-5. **Class imbalance at the extremes** (`Very High` risk: n=3) is the primary constraint on reliable Very High detection — not model capability
-
----
-
-## Limitations & Future Work
-
-| Limitation | Mitigation Path |
-|------------|----------------|
-| `Very High` risk class has only 3 samples | SMOTE or cost-sensitive learning |
-| Risk bins based on raw DataValue magnitudes (not clinical thresholds) | Consult CDC severity guidelines for bin definitions |
-| No temporal modeling | ARIMA or Prophet for disease trend forecasting |
-| No causal inference | Difference-in-differences for policy intervention evaluation |
-| Single-notebook structure | Modularize into `src/` pipeline for reproducibility |
+**Honest assessment of the Random Forest result:** Raw accuracy of 0.9999 is dominated by the 238K-record `Low` class versus only 3 `Very High` records. The model correctly identifies Low risk but has 0.33 recall on Very High — the most critical class. This is a documented limitation, not a success.
 
 ---
 
@@ -110,38 +54,84 @@ Applied K-Means (k=3) on state-level disease frequency vectors to segment states
 | Layer | Tools |
 |-------|-------|
 | Data processing | Python, Pandas, NumPy |
-| Visualization | Matplotlib, Seaborn, Plotly (interactive maps) |
 | Geospatial | GeoPandas |
-| Machine learning | Scikit-learn (Logistic Regression, Naive Bayes, Random Forest, KMeans) |
+| Machine learning | Scikit-learn (KMeans, Logistic Regression, GaussianNB, Random Forest, DecisionTree) |
+| Visualization | Matplotlib, Seaborn, Plotly (interactive state-year heatmaps) |
 | Environment | Google Colab |
 
 ---
 
-## Repository Structure
+## Data Architecture
 
 ```
-.
-├── CSE469FinalProject.ipynb   # Full pipeline: EDA → clustering → modeling
-├── presentation.pdf           # Project presentation slides
-├── README.md
-└── asset/
-    └── image1                 # Supporting visualizations
+CDC U.S. Chronic Disease Indicators (900K+ rows, 2001–2021)
+│
+├── Raw: 34 columns including YearStart/End, LocationAbbr, Topic, Question,
+│        DataValue, DataValueType, StratificationCategory, GeoLocation,
+│        DataSource, and 10+ administrative metadata columns
+│
+├── Cleaning:
+│   ├── Parse GeoLocation → Latitude, Longitude
+│   ├── Mode imputation for DataValueUnit (by Topic × Question group)
+│   ├── Drop: LocationDesc, footnote columns, LowConfidenceLimit, HighConfidenceLimit
+│   └── Remove rows where GeoLocation or DataValueAlt is null → 794K clean records
+│
+├── Feature Engineering:
+│   ├── DeadStatus — binary flag from DataSource (NVSS / Death Certificate = 1)
+│   ├── diseaseDuration — YearEnd - YearStart
+│   ├── One-hot encoding of 17 disease Topic values
+│   └── RiskLevel — pd.cut on DataValueAlt (bins: Low/Moderate/High/Very High)
+│
+└── Modeling datasets:
+    ├── Clustering: [States × disease frequency counts]
+    ├── Mortality: [YearStart, topic indicators, diseaseDuration] → DeadStatus
+    └── Risk level: [all topic indicators + DeadStatus + LocationAbbr + diseaseDuration] → RiskLevel
 ```
-
-## How to Run
-
-1. Download the dataset from [CDC Open Data](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi)
-2. Upload to Google Drive at `My Drive/DM Project/U.S._Chronic_Disease_Indicators__CDI_.csv`
-3. Open `CSE469FinalProject.ipynb` in Google Colab
-4. Run all cells sequentially
 
 ---
 
-## Results Summary
+## Key Insights & Analytics
 
-| Task | Model | Key Metric |
-|------|-------|-----------|
-| Mortality prediction | Logistic Regression | Accuracy: 0.77, AUC: 0.73 |
-| Mortality prediction | Naive Bayes | Accuracy: 0.42 |
-| Risk classification | Random Forest | Weighted F1: 1.00, Macro F1: 0.85 |
-| State clustering | K-Means (k=3) | Silhouette: 0.635 |
+1. **Cancer has the highest surveillance volume (127K+ records)** but Cardiovascular Disease and Tobacco are the strongest co-predictors of mortality-linked outcomes in the Logistic Regression model — consistent with decades of epidemiological research.
+
+2. **Three state tiers emerged from clustering:** High-surveillance states (Northeast + California) generate 3–4x more records than low-surveillance states. Low surveillance does not mean low risk — it means unmeasured risk. These are the states most needing targeted infrastructure investment.
+
+3. **Mental Health indicators grew faster than any other topic post-2016.** This is not noise — it reflects a structural shift in both reporting practices and actual population health burden. Future resource allocation should prioritize mental health infrastructure.
+
+4. **The 5-year duration cohort (YearEnd − YearStart = 4)** represents 15% of records and covers longitudinal surveillance programs — these records carry qualitatively different information than single-year snapshots and should be modeled separately.
+
+5. **Naive Bayes fails badly (42% accuracy) due to feature dependence.** Disease topic indicators are correlated by design — patients with Diabetes often co-occur with Cardiovascular Disease. The independence assumption is structurally violated, confirming that Logistic Regression is the correct baseline.
+
+---
+
+## How to Reuse / Scale
+
+**To run this notebook:**
+1. Download the dataset from [CDC Open Data](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi)
+2. Upload to Google Drive at `My Drive/DM Project/U.S._Chronic_Disease_Indicators__CDI_.csv`
+3. Open `CSE469FinalProject.ipynb` in Google Colab and run all cells
+
+**Scaling to real-time public health monitoring:**
+- Replace Google Drive CSV loading with a CDC API pull (SODA API) for automated data refresh
+- Replace K-Means with DBSCAN for geographic cluster detection that doesn't require a predetermined k
+- Deploy the risk classifier as a FastAPI microservice for state-level real-time dashboards
+- Integrate with county-level data (FIPS codes) for sub-state geographic granularity
+- Add SMOTE or cost-sensitive learning to address the Very High risk class imbalance — the most critical gap for operational use
+
+**Generalizes to:**
+- Any multi-state, multi-indicator public health surveillance dataset
+- International equivalents: WHO Global Health Observatory, EU health indicator datasets
+
+---
+
+## Challenges & What Could Be Improved
+
+| Challenge | Improvement Path |
+|-----------|-----------------|
+| `Very High` risk class has only 3 samples — recall = 0.33 | SMOTE oversampling, cost-sensitive Random Forest, or anomaly detection framing |
+| Risk bins based on raw DataValue magnitudes, not clinical thresholds | Consult CDC severity definitions; use quantile-based or clinically-validated cutoffs |
+| 0.9999 accuracy is misleading and could misrepresent model quality | Report macro F1 (0.85) as the headline; add confusion matrix prominently in README |
+| No temporal forecasting | Add ARIMA or Prophet for disease burden trend forecasting at state level |
+| No causal inference | Apply difference-in-differences to evaluate the impact of specific public health policy interventions |
+| Single monolithic notebook | Refactor into `src/` modules: `data_cleaning.py`, `eda.py`, `models.py` for reproducibility |
+| README copy-paste errors from prior version | Fixed — all content now reflects the actual CDI dataset |
