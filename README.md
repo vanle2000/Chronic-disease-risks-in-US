@@ -1,6 +1,6 @@
 # Uncovering Patterns and Predicting Chronic Disease Risks in the U.S​
 ​
-## Here is the link to the Tableau interactive dashboard [Tableau - AirBbB in NYC Analytics](https://public.tableau.com/app/profile/nguyen.ho2733/viz/Airbnb_16840158070070/Dashboard3)
+## Here is the link to the Tableau interactive dashboard [Tableau - ...]
 
 ## 1. Problem Statement
 I aim to use data mining algorithms to tackle a challenge in U.S. public health through classification of risk stratification and predictive models of chronic disease trends across different geographies from 2001 to 2021. The dataset `U.S. Chronic Disease Indicators (CDI)` was obtained to discover patterns and potential outbreak risks of chronic diseases at the state level. Through this work, I deliver the insight to improve the public health outcomes and preventive measures. 
