@@ -1,4 +1,4 @@
-"""Reusable EDA plots for CDC Chronic Disease Indicators analysis."""
+﻿"""Reusable EDA plots for CDC Chronic Disease Indicators analysis."""
 
 import logging
 import pathlib
@@ -151,7 +151,7 @@ def feature_importance_plot(importances: pd.Series, model_name: str = "Random Fo
     fig, ax = plt.subplots(figsize=(8, 6))
     top.sort_values().plot.barh(ax=ax, color="#4878cf")
     ax.set_xlabel("Feature Importance (Mean Decrease in Impurity)")
-    ax.set_title(f"Top 20 Feature Importances — {model_name}")
+    ax.set_title(f"Top 20 Feature Importances  -  {model_name}")
     plt.tight_layout()
     plt.savefig(FIGURES_DIR / f"feature_importance_{model_name.replace(' ', '_')}.png", dpi=150)
     plt.close()
@@ -159,14 +159,14 @@ def feature_importance_plot(importances: pd.Series, model_name: str = "Random Fo
 
 
 def risk_level_distribution(df: pd.DataFrame) -> None:
-    """Pie / bar chart of risk level counts — always show raw counts alongside %."""
+    """Pie / bar chart of risk level counts  -  always show raw counts alongside %."""
     if "risk_level" not in df.columns:
         return
     counts = df["risk_level"].value_counts()
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
-    # Bar — shows absolute scale
+    # Bar  -  shows absolute scale
     counts.plot.bar(ax=axes[0], color=["#2ca02c", "#ff7f0e", "#d62728", "#9467bd"])
     axes[0].set_title("Risk Level Counts (absolute)")
     axes[0].set_ylabel("Records")
@@ -177,7 +177,7 @@ def risk_level_distribution(df: pd.DataFrame) -> None:
             ha="center", va="bottom", fontsize=9,
         )
 
-    # Pie — shows proportions but labeled with n
+    # Pie  -  shows proportions but labeled with n
     labels = [f"{idx}\n(n={n:,})" for idx, n in counts.items()]
     axes[1].pie(counts.values, labels=labels, autopct="%1.1f%%",
                 colors=["#2ca02c", "#ff7f0e", "#d62728", "#9467bd"])

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Model training for CDC Chronic Disease Indicators.
 
 Three tasks:
@@ -114,7 +114,7 @@ def train_mortality_model(df: pd.DataFrame) -> dict:
     auc = roc_auc_score(y, y_prob)
     report = classification_report(y, y_pred, output_dict=True)
 
-    logger.info("Logistic Regression — AUC=%.3f | Macro F1=%.3f", auc, report["macro avg"]["f1-score"])
+    logger.info("Logistic Regression  -  AUC=%.3f | Macro F1=%.3f", auc, report["macro avg"]["f1-score"])
 
     model.fit(X, y)
     return {
@@ -149,7 +149,7 @@ def train_risk_classifier(df: pd.DataFrame) -> dict:
     tiny_classes = class_counts[class_counts < 10].index.tolist()
     if tiny_classes:
         logger.warning(
-            "Classes %s have <10 samples — metrics will be unreliable for these classes",
+            "Classes %s have <10 samples  -  metrics will be unreliable for these classes",
             tiny_classes,
         )
 
@@ -172,7 +172,7 @@ def train_risk_classifier(df: pd.DataFrame) -> dict:
     accuracy = report["accuracy"]
 
     logger.info(
-        "Random Forest — Accuracy=%.4f | Macro F1=%.3f | Weighted F1=%.3f",
+        "Random Forest  -  Accuracy=%.4f | Macro F1=%.3f | Weighted F1=%.3f",
         accuracy, macro_f1, weighted_f1,
     )
     logger.info(

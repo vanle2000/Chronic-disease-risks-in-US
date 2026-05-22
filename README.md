@@ -1,6 +1,6 @@
-# Chronic Disease Risk Intelligence: Predicting Outbreak Patterns Across the U.S.
+﻿# Chronic Disease Risk Intelligence: Predicting Outbreak Patterns Across the U.S.
 
-**Public Health Resource Allocation Model** — clusters states by disease burden, predicts mortality risk, and classifies disease severity with honest imbalance-aware evaluation across 20 years of CDC surveillance data.
+**Public Health Resource Allocation Model**  -  clusters states by disease burden, predicts mortality risk, and classifies disease severity with honest imbalance-aware evaluation across 20 years of CDC surveillance data.
 
 ---
 
@@ -11,7 +11,7 @@ Chronic diseases consume 90% of the U.S.'s $4.1 trillion annual healthcare spend
 
 ### Problem
 The CDC Chronic Disease Indicators dataset is 900K+ rows of surveillance data with three critical modeling challenges:
-1. **Extreme class imbalance**: the `Very High` risk class has only 3 samples — raw accuracy of 0.9999 is meaningless
+1. **Extreme class imbalance**: the `Very High` risk class has only 3 samples  -  raw accuracy of 0.9999 is meaningless
 2. **State-level confounding**: raw counts reflect surveillance capacity, not actual disease burden
 3. **Temporal structure**: 20 years of data has trend signals that point estimates ignore
 
@@ -26,7 +26,7 @@ Three-stage pipeline: **clean → cluster → model**
 
 Key engineering decisions:
 - Row-normalize state disease matrix before clustering to remove surveillance volume bias
-- Use `class_weight="balanced"` in all classifiers — never report raw accuracy alone
+- Use `class_weight="balanced"` in all classifiers  -  never report raw accuracy alone
 - Report **macro F1** as the primary metric (not accuracy) for imbalanced targets
 - Mann-Kendall trend test for statistically significant topic trends (not just visual inspection)
 
@@ -106,15 +106,15 @@ Raw CDC record
 
 ## Key Insights & Analytics
 
-1. **Surveillance volume ≠ disease burden.** After row-normalizing the state × topic matrix, clustering separates states by *what they track*, not *how many records they have*. Low-surveillance states cluster together — these are data gaps, not low-risk states.
+1. **Surveillance volume ≠ disease burden.** After row-normalizing the state × topic matrix, clustering separates states by *what they track*, not *how many records they have*. Low-surveillance states cluster together  -  these are data gaps, not low-risk states.
 
-2. **Cancer has the highest surveillance volume (127K+ records)** but Cardiovascular Disease and Tobacco are the top mortality predictors in the Logistic Regression model — consistent with epidemiological literature.
+2. **Cancer has the highest surveillance volume (127K+ records)** but Cardiovascular Disease and Tobacco are the top mortality predictors in the Logistic Regression model  -  consistent with epidemiological literature.
 
 3. **Mental Health is the fastest-growing indicator topic post-2016.** A Mann-Kendall trend test on yearly record counts returns a statistically significant upward trend (p < 0.05), distinguishing a real trend from noise.
 
-4. **The 0.9999 accuracy on risk classification is a warning, not a result.** The `Low` class accounts for 99.97% of records. The model learns to predict `Low` almost every time. Macro F1 of 0.85 is the number that matters — and `Very High` recall of 0.33 on 3 samples is the gap that needs fixing.
+4. **The 0.9999 accuracy on risk classification is a warning, not a result.** The `Low` class accounts for 99.97% of records. The model learns to predict `Low` almost every time. Macro F1 of 0.85 is the number that matters  -  and `Very High` recall of 0.33 on 3 samples is the gap that needs fixing.
 
-5. **`is_mortality` is the highest-importance feature in the Random Forest** — meaning the best predictor of risk level is whether the data was collected from a mortality data source. This is a feature engineering insight: the measurement methodology carries signal.
+5. **`is_mortality` is the highest-importance feature in the Random Forest**  -  meaning the best predictor of risk level is whether the data was collected from a mortality data source. This is a feature engineering insight: the measurement methodology carries signal.
 
 ---
 

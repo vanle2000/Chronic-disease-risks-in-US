@@ -1,4 +1,4 @@
-"""Unit tests for CDC CDI preprocessing pipeline."""
+﻿"""Unit tests for CDC CDI preprocessing pipeline."""
 
 import pathlib
 import sys
@@ -79,7 +79,7 @@ class TestClean:
         assert len(df) > 100  # some rows may be dropped
 
     def test_raises_on_too_small(self):
-        # Only 5 rows — should fail the size assertion
+        # Only 5 rows  -  should fail the size assertion
         raw = _make_raw(5)
         # Override DataValueAlt so rows aren't dropped for nulls
         raw["DataValueAlt"] = 100.0
