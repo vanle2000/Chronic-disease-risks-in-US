@@ -1,4 +1,4 @@
-﻿# Chronic Disease Risk Intelligence: Predicting Outbreak Patterns Across the U.S.
+# Chronic Disease Risk Intelligence: Predicting Outbreak Patterns Across the U.S.
 
 **Public Health Resource Allocation Model**  -  clusters states by disease burden, predicts mortality risk, and classifies disease severity with honest imbalance-aware evaluation across 20 years of CDC surveillance data.
 
@@ -57,24 +57,44 @@ Key engineering decisions:
 
 ## Data Architecture
 
-```
+This project is organized as a reproducible public health analytics pipeline. The raw CDC surveillance file is cleaned once, saved as a parquet analytical layer, then reused for SQL exploration, Tableau extracts, and machine learning experiments.
+
+### Repository layout
+
+```text
 data/
 ├── raw/
-│   └── U.S._Chronic_Disease_Indicators__CDI_.csv  ← Download from CDC Open Data
-└── processed/
-    └── cdi_processed.parquet  ← Output of preprocessing pipeline
+│   └── U.S._Chronic_Disease_Indicators__CDI_.csv
+│       # Source file from CDC Open Data. Not committed because of size.
+├── processed/
+│   └── cdi_processed.parquet
+│       # Cleaned, feature-engineered dataset used by SQL, EDA, and ML.
+└── analytics/
+    └── chronic_disease.duckdb
+        # Optional local SQL database generated from the processed parquet file.
 
 src/
 ├── data/
-│   └── preprocessing.py       ← load → clean → parse_geolocation →
-│                                 impute_data_value_unit → engineer_features →
-│                                 encode_categoricals → save
+│   └── preprocessing.py
+│       # Loads raw CSV, cleans fields, parses geolocation, imputes units,
+│       # engineers features, encodes categoricals, and saves parquet output.
 ├── models/
-│   └── train.py               ← cluster_states(), train_mortality_model(),
-│                                 train_risk_classifier(), run()
+│   └── train.py
+│       # Builds state clusters, trains mortality prediction,
+│       # trains risk classification, and exports model artifacts.
 └── visualization/
-    └── eda.py                  ← topic trends, state heatmap, demographic
-                                  breakdown, Mann-Kendall tests, risk imbalance plot
+    └── eda.py
+        # Creates topic distributions, time trends, state heatmaps,
+        # demographic breakdowns, risk imbalance charts, and feature plots.
+
+notebooks/
+└── train_model.py
+    # Notebook-friendly training workflow for Colab reruns and experimentation.
+
+tests/
+└── test_preprocessing.py
+    # Unit tests for cleaning, geolocation parsing, feature engineering,
+    # categorical encoding, and preprocessing assumptions.
 
 reports/
 ├── state_clusters.csv
@@ -89,17 +109,53 @@ reports/
     └── feature_importance_Random_Forest.png
 ```
 
-**Feature engineering pipeline:**
+### Analysis extension layer
+
+The next analysis layer adds SQL and Tableau without changing the core Python pipeline. The parquet file remains the single cleaned data source, while DuckDB and Tableau extracts support business-style analysis and dashboarding.
+
+```text
+sql/
+├── 01_create_tables.sql
+├── 02_exploratory_analysis.sql
+├── 03_tableau_extracts.sql
+└── 04_model_monitoring.sql
+
+tableau/
+├── topic_year_trends.csv
+├── state_topic_summary.csv
+├── risk_distribution.csv
+├── mortality_by_topic.csv
+├── state_clusters.csv
+├── feature_importances.csv
+└── model_summary.csv
 ```
+
+### Data flow
+
+```text
+CDC Chronic Disease Indicators CSV
+  → preprocessing.py
+  → cdi_processed.parquet
+  → DuckDB SQL analysis
+  → Tableau-ready CSV extracts
+  → model training and evaluation
+  → reports, figures, feature importances, and model summary outputs
+```
+
+### Feature engineering pipeline
+
+```text
 Raw CDC record
-  → DataValue (numeric coercion)
-  → GeoLocation → Latitude, Longitude (WKT POINT parsing)
-  → DataValueUnit (mode imputation by Topic × Question group)
-  → is_mortality (binary: NVSS/Death Certificate source = 1)
-  → disease_duration (YearEnd - YearStart, clipped ≥ 0)
-  → risk_level (pd.cut: Low/Moderate/High/Very High)
-  → topic_* (one-hot: 17 disease categories)
-  → LocationAbbr_enc, DataValueType_enc (LabelEncoder)
+  → numeric coercion for DataValue and DataValueAlt
+  → missing-value cleanup and low-signal column removal
+  → GeoLocation parsing into Latitude and Longitude
+  → DataValueUnit imputation by Topic × Question mode
+  → is_mortality flag from mortality-related data sources
+  → disease_duration from YearEnd minus YearStart
+  → risk_level bins for Low, Moderate, High, and Very High records
+  → topic_* one-hot disease indicators
+  → encoded location, value type, and stratification fields
+  → model-ready state, topic, mortality, and risk features
 ```
 
 ---
