@@ -2,6 +2,12 @@
 
 End-to-end analysis of the CDC's U.S. Chronic Disease Indicators (CDI) dataset (2001–2021), with risk-level classification, hyperparameter tuning, outlier detection, and public-health recommendations.
 
+## Interactive Dashboard
+
+Tableau Public dashboard: **<TABLEAU_PUBLIC_URL_TBD>** (replace this placeholder with your published URL — see [`tableau/README.md`](tableau/README.md) for the build guide).
+
+![Dashboard A thumbnail](asset/tableau_thumbnail.png)
+
 ## 1. Problem Statement
 I aim to use data-mining algorithms to tackle a challenge in U.S. public health through risk-level classification and predictive modeling of chronic-disease trends across U.S. states from 2001 to 2021. The dataset is the CDC's [U.S. Chronic Disease Indicators (CDI)](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi). The aim is to surface state-level patterns that can inform preventive measures and resource allocation.
 
@@ -41,6 +47,14 @@ jupyter notebook CSE469FinalProject.ipynb
 The notebook expects the raw CDI CSV at the path used in cell 4 (`U.S._Chronic_Disease_Indicators__CDI_.csv`). Download it from the [data.gov catalog page](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi) and place it next to the notebook (or update the path).
 
 Reusable functions (data loading, lat/lon extraction, outlier detection, multi-class evaluation) live in `helpers.py` and are imported by the notebook.
+
+### Reproducing the Tableau dashboard
+
+The notebook's final "Tableau Exports" section writes four CSVs into `tableau/`. Once they exist:
+
+1. Open Tableau Desktop Public Edition (Mac/Windows) or `public.tableau.com` Web Authoring (any OS).
+2. Follow the step-by-step build guide in [`tableau/README.md`](tableau/README.md) — data-source connections, eight worksheets, two dashboards, and publishing instructions.
+3. Save to Tableau Public, then paste the resulting URL into the **Interactive Dashboard** section at the top of this README.
 
 ## 4. Data Exploration
 
@@ -87,6 +101,7 @@ Class imbalance is acknowledged explicitly: the "Very High" class has only a han
 CSE469FinalProject.ipynb   # main analysis notebook
 helpers.py                 # reusable functions (data loading, outliers, evaluation)
 requirements.txt           # pinned minimum versions
+tableau/                   # Tableau Public dashboard extracts + build guide
 presentation.pdf           # slide deck
-asset/                     # supplementary assets
+asset/                     # supplementary assets (thumbnails, images)
 ```
