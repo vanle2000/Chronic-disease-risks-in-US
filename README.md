@@ -4,8 +4,6 @@
 
 ---
 
-## Case Study
-
 ### Introduction
 Chronic diseases consume 90% of the U.S.'s $4.1 trillion annual healthcare spend. Public health agencies face a fundamental constraint: limited budgets, unlimited need. Every dollar spent on the wrong state or the wrong disease is a dollar that doesn't prevent a death. This project builds a data pipeline that turns 20 years of CDC surveillance records into a geographically-aware, statistically-grounded resource allocation model.
 
@@ -48,53 +46,37 @@ Key engineering decisions:
 | Data processing | Python, Pandas, NumPy |
 | Geospatial parsing | GeoPandas, WKT coordinate extraction |
 | Machine learning | Scikit-learn (KMeans, LogisticRegression, RandomForest), imbalanced-learn |
-| Statistical testing | SciPy (t-test, Spearman), pymannkendall (Mann-Kendall trend test) |
-| Visualization | Matplotlib, Seaborn, Plotly (interactive heatmaps) |
+| Visualization | Plotly (interactive heatmaps) and Tableau Dashboard |
 | Testing | pytest, pytest-cov |
-| Reproducibility | Makefile, parquet intermediate outputs |
 
 ---
-
-## Data Architecture
-
-This project is organized as a reproducible public health analytics pipeline. The raw CDC surveillance file is cleaned once, saved as a parquet analytical layer, then reused for SQL exploration, Tableau extracts, and machine learning experiments.
 
 ### Repository layout
 
 ```text
 data/
 ├── raw/
-│   └── U.S._Chronic_Disease_Indicators__CDI_.csv
-│       # Source file from CDC Open Data. Not committed because of size.
+│   └── U.S._Chronic_Disease_Indicators__CDI_.csv # Source file from CDC Open Data. Not committed because of size.
 ├── processed/
-│   └── cdi_processed.parquet
-│       # Cleaned, feature-engineered dataset used by SQL, EDA, and ML.
+│   └── cdi_processed.parquet # Cleaned, feature-engineered dataset used by SQL, EDA, and ML.
 └── analytics/
-    └── chronic_disease.duckdb
-        # Optional local SQL database generated from the processed parquet file.
+    └── chronic_disease.duckdb # Optional local SQL database generated from the processed parquet file.
 
 src/
 ├── data/
 │   └── preprocessing.py
-│       # Loads raw CSV, cleans fields, parses geolocation, imputes units,
-│       # engineers features, encodes categoricals, and saves parquet output.
+│       # Loads raw CSV, cleans fields, parses geolocation, imputes units, engineers features, encodes categoricals, and saves parquet output.
 ├── models/
-│   └── train.py
-│       # Builds state clusters, trains mortality prediction,
-│       # trains risk classification, and exports model artifacts.
+│   └── train.py # Builds state clusters, trains mortality prediction, trains risk classification, and exports model artifacts.
 └── visualization/
-    └── eda.py
-        # Creates topic distributions, time trends, state heatmaps,
-        # demographic breakdowns, risk imbalance charts, and feature plots.
+    └── eda.py Creates topic distributions, time trends, state heatmaps, demographic breakdowns, risk imbalance charts, and feature plots.
 
 notebooks/
 └── train_model.py
     # Notebook-friendly training workflow for Colab reruns and experimentation.
 
 tests/
-└── test_preprocessing.py
-    # Unit tests for cleaning, geolocation parsing, feature engineering,
-    # categorical encoding, and preprocessing assumptions.
+└── test_preprocessing.py # Unit tests for cleaning, geolocation parsing, feature engineering, categorical encoding, and preprocessing assumptions.
 
 reports/
 ├── state_clusters.csv
@@ -128,18 +110,6 @@ tableau/
 ├── state_clusters.csv
 ├── feature_importances.csv
 └── model_summary.csv
-```
-
-### Data flow
-
-```text
-CDC Chronic Disease Indicators CSV
-  → preprocessing.py
-  → cdi_processed.parquet
-  → DuckDB SQL analysis
-  → Tableau-ready CSV extracts
-  → model training and evaluation
-  → reports, figures, feature importances, and model summary outputs
 ```
 
 ### Feature engineering pipeline
@@ -181,31 +151,6 @@ If deployed for public health decision-making:
 - **Primary metric:** Mortality rate per 100K population at 2-year follow-up
 - **Control:** States matched by population, baseline mortality rate, and surveillance tier
 - **Statistical test:** Difference-in-differences with state and year fixed effects
-
----
-
-## How to Run
-
-```bash
-git clone https://github.com/vanle2000/Chronic-disease-risks-in-US.git
-cd Chronic-disease-risks-in-US
-pip install -r requirements.txt  # or: make install
-
-# Download dataset from CDC Open Data (link in Data Architecture above)
-# Place in: data/raw/U.S._Chronic_Disease_Indicators__CDI_.csv
-
-python src/data/preprocessing.py   # → data/processed/cdi_processed.parquet
-python src/models/train.py         # → reports/model_summary.csv
-
-make test  # run 22 unit tests
-```
-
-**Scale to production:**
-- Replace CSV load with CDC SODA API for automated weekly refresh
-- Deploy risk classifier as FastAPI endpoint: state + disease → risk tier
-- Use DBSCAN instead of KMeans for cluster count that adapts to data structure
-- Add county-level FIPS codes for sub-state geographic granularity
-
 ---
 
 ## Challenges & What Could Be Improved
