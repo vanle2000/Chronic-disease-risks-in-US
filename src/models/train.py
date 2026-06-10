@@ -1,12 +1,9 @@
 ﻿"""
 Model training for CDC Chronic Disease Indicators.
-
-Three tasks:
 1. K-Means clustering of states by disease burden profile
 2. Logistic Regression for mortality (is_mortality) prediction
 3. Random Forest for risk level classification with honest evaluation
 """
-
 import logging
 import pathlib
 
@@ -56,7 +53,7 @@ def load_processed() -> pd.DataFrame:
     return pd.read_parquet(PROCESSED_DIR / "cdi_processed.parquet")
 
 
-# ── Task 1: State-level clustering ─────────────────────────────────────────
+# State-level clustering
 
 def build_state_disease_matrix(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -89,7 +86,7 @@ def cluster_states(
     return {"silhouette": sil, "n_clusters": n_clusters, "state_clusters": state_matrix}
 
 
-# ── Task 2: Mortality prediction ───────────────────────────────────────────
+# Mortality prediction 
 
 def train_mortality_model(df: pd.DataFrame) -> dict:
     available = [f for f in MORTALITY_FEATURES if f in df.columns]
@@ -127,7 +124,7 @@ def train_mortality_model(df: pd.DataFrame) -> dict:
     }
 
 
-# ── Task 3: Risk level classification ──────────────────────────────────────
+# Risk level classification
 
 def train_risk_classifier(df: pd.DataFrame) -> dict:
     """
