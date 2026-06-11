@@ -1,7 +1,3 @@
--- Chronic Disease Risk Analytics
--- SQL layer for DuckDB or any warehouse with minor syntax changes.
--- Run after data/processed/cdi_processed.parquet has been created.
-
 CREATE SCHEMA IF NOT EXISTS analytics;
 
 CREATE OR REPLACE TABLE analytics.cdi_observations AS
