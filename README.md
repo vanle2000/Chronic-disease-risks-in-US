@@ -1,10 +1,6 @@
 # Chronic Disease Risk Analytics in the U.S.
 
-I built this project to explore chronic disease risk across the United States using SQL, Tableau, and machine learning. My main goal is simple. I want to turn a large public health dataset into clear insights that a stakeholder can actually use.
-
-I start with SQL because that is where the real analysis happens. Then I use Tableau to tell the story visually. After that, I move into notebooks for deeper feature engineering and machine learning.
-
-This project is designed to show how I think through an analytics problem from the first business question to the final model.
+I built this project to explore chronic disease risk across the United States using SQL, Tableau, and machine learning. I want to turn a large public health dataset into clear insights that a stakeholder can actually use.
 
 ## What I am trying to answer
 
@@ -17,39 +13,15 @@ I use the CDC Chronic Disease Indicators data to answer practical public health 
 5. Which demographic groups show higher average indicator values
 6. Is the data ready for machine learning or does it need more feature work first
 
-## How I structured the project
-
-I redesigned this project to be analytics first.
-
-The flow is:
-
-```text
-Raw CDC data
-  → clean data
-  → SQL analysis
-  → Tableau dashboards
-  → notebook feature engineering
-  → machine learning
-  → model evaluation
-```
-
-I want the project to feel like real work on a data team. The first deliverable is not a model. The first deliverable is a clear understanding of the data, the business problem, and the patterns that matter.
-
-## Why I built it this way
-
-I wanted this project to show more than model training. A strong data scientist should be able to work through the full path from messy data to business insight.
-
 In this project, I focus on:
 
-1. Asking useful business questions
+1. Asking useful questions based on the data analytics 
 2. Creating clean SQL views
-3. Building Tableau dashboards for stakeholders
+3. Building Tableau dashboards 
 4. Checking data quality and class balance
 5. Creating better features in notebooks
 6. Training baseline machine learning models
 7. Explaining why some metrics can be misleading
-
-That is why SQL and Tableau come first. Machine learning is the next step, not the starting point.
 
 ## Tools I used
 
@@ -61,7 +33,7 @@ DuckDB SQL for analytics views and Tableau extracts
 
 Tableau for dashboards and business storytelling
 
-Scikit learn for baseline models
+Scikit learn for predictive models
 
 imbalanced learn for class imbalance experiments
 
@@ -75,13 +47,10 @@ Parquet and CSV for reusable data outputs
 data/
 ├── raw/
 │   └── U.S._Chronic_Disease_Indicators__CDI_.csv
-│       Source CDC file. I do not commit this because the file is large.
 ├── processed/
-│   └── cdi_processed.parquet
-│       Clean data layer used by SQL, Tableau, notebooks, and models.
+│   └── cdi_processed.parquet #Clean data layer used by SQL, Tableau, notebooks, and models.
 └── analytics/
-    └── chronic_disease.duckdb
-        Local DuckDB database for SQL analysis.
+    └── chronic_disease.duckdb #Local DuckDB database for SQL analysis.
 
 sql/
 ├── 01_create_analytics_views.sql
@@ -101,8 +70,7 @@ tableau/
 └── demographic_risk.csv
 
 notebooks/
-└── train_model.py
-    Notebook style workflow for feature engineering and model training.
+└── train_model.py #For feature engineering and model training.
 
 reports/
 ├── state_clusters.csv
@@ -117,13 +85,10 @@ reports/
     └── feature_importance_Random_Forest.png
 
 tests/
-└── test_preprocessing.py
-    Tests for cleaning logic and feature engineering assumptions.
+└── test_preprocessing.py # Tests for cleaning logic and feature engineering assumptions.
 ```
 
 ## SQL analysis
-
-SQL is the center of this project. I use it to create clean analysis tables before I build dashboards or models.
 
 The main SQL file creates:
 
@@ -137,15 +102,11 @@ The main SQL file creates:
 
 These views help me answer the core business questions before I start modeling.
 
-The SQL layer also makes the project easier to review because every dashboard metric has a clear source.
-
 ## Tableau dashboards
 
 I designed the Tableau section around three dashboard ideas.
 
-### Dashboard 1: Executive overview
-
-This dashboard gives a quick view of the national chronic disease picture.
+### Dashboard 1: This dashboard gives a quick view of the national chronic disease picture.
 
 It should include:
 
@@ -172,8 +133,6 @@ It should include:
 
 ### Dashboard 3: Modeling readiness
 
-This dashboard helps me decide whether the data is ready for ML.
-
 It should include:
 
 1. Risk level distribution
@@ -181,8 +140,6 @@ It should include:
 3. Feature availability checks
 4. Model summary after training
 5. Feature importance after training
-
-I like this dashboard because it connects analytics with machine learning in a practical way.
 
 ## Notebook and machine learning phase
 
@@ -222,26 +179,6 @@ I want to add:
 7. SHAP analysis for model explanation
 8. Time based validation instead of random splits
 
-These steps would make the project stronger and much closer to a real data science workflow.
-
-## What I want this project to show
-
-I want this repo to show that I can do more than train a model.
-
-I can take a large dataset, shape it into an analysis layer, build SQL views, create Tableau dashboards, and then use the same foundation for machine learning.
-
-The project shows:
-
-1. Business thinking
-2. SQL analysis
-3. Dashboard planning
-4. Data quality awareness
-5. Feature engineering
-6. Baseline modeling
-7. Honest model evaluation
-
-That is the story I want this project to tell.
-
 ## How to run the project
 
 Clone the repo from GitHub.
@@ -280,21 +217,3 @@ Continue to notebook modeling.
 python notebooks/train_model.py
 ```
 
-## Next steps
-
-I plan to keep improving this project in a few areas.
-
-1. Add more SQL data quality checks
-2. Build and publish the Tableau dashboards
-3. Add state year population data
-4. Improve feature engineering in notebooks
-5. Add time based validation
-6. Compare imbalance handling methods
-7. Add SHAP based model interpretation
-8. Clean up the run flow so the repo is easier to reproduce
-
-## Final note
-
-I built this project to show how I approach a data problem from beginning to end. I care about the analysis first, because a model is only useful when the data story makes sense.
-
-This repo is my way of showing that I can work across SQL, Tableau, Python, and machine learning with a clear business goal in mind.
