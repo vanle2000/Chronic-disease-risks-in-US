@@ -1,114 +1,98 @@
 # Chronic Disease Risk Analytics in the U.S.
 
-**SQL and Tableau-first public health analytics project with a machine learning extension.**
+I built this project to explore chronic disease risk across the United States using SQL, Tableau, and machine learning. My main goal is simple. I want to turn a large public health dataset into clear insights that a stakeholder can actually use.
 
-This project analyzes CDC Chronic Disease Indicators data to identify disease surveillance patterns, state-level risk signals, mortality-related indicators, and opportunities for public health resource prioritization. The workflow is intentionally designed like an analytics project owned by a data analyst or early-career data scientist: start with SQL, build decision-ready Tableau dashboards, then move into notebooks for feature engineering and machine learning.
+I start with SQL because that is where the real analysis happens. Then I use Tableau to tell the story visually. After that, I move into notebooks for deeper feature engineering and machine learning.
 
----
+This project is designed to show how I think through an analytics problem from the first business question to the final model.
 
-## Project Objective
+## What I am trying to answer
 
-Public health teams need to understand where chronic disease burden appears concentrated, which disease topics are changing over time, and where mortality-related indicators require deeper investigation. Before training a model, the project first answers business and analytical questions with structured SQL marts and Tableau dashboards.
+I use the CDC Chronic Disease Indicators data to answer practical public health questions.
 
-The machine learning layer is treated as a second phase. It builds on the SQL analysis by converting validated analytical patterns into modeling features for clustering, mortality prediction, and risk classification.
+1. Which chronic disease topics show the most activity across the country
+2. Which states and topics need closer attention
+3. How do disease indicators change over time
+4. Which topics are most connected to mortality related records
+5. Which demographic groups show higher average indicator values
+6. Is the data ready for machine learning or does it need more feature work first
 
----
+## How I structured the project
 
-## Business Questions
+I redesigned this project to be analytics first.
 
-1. Which chronic disease topics have the largest surveillance footprint across the U.S.
-2. How have disease indicators changed over time by topic and state
-3. Which state-topic combinations show elevated average indicator values
-4. Which topics are most associated with mortality-related records
-5. Are there demographic groups with consistently higher indicator values
-6. Is the dataset suitable for predictive modeling, or does imbalance create risk
-
----
-
-## Project Workflow
-
-| Phase | Focus | Primary Tools | Output |
-|---|---|---|---|
-| 1 | Data ingestion and cleaning | Python, Pandas | Clean parquet analytical layer |
-| 2 | Exploratory analytics | SQL, DuckDB | Reusable KPI and dashboard marts |
-| 3 | Business intelligence | Tableau | Executive, state-level, and modeling-readiness dashboards |
-| 4 | Feature engineering | Python notebooks | Model-ready feature tables |
-| 5 | Machine learning | Scikit-learn | Clustering, mortality prediction, risk classification |
-| 6 | Evaluation and interpretation | Macro F1, AUC, feature importance | Model summary and feature insight outputs |
-
----
-
-## Why This Design Matches a 2-Year Data Scientist Role
-
-This project is structured to show the work expected from a data scientist with roughly two years of industry experience:
-
-- Convert a broad public dataset into a focused analytical product
-- Define business questions before modeling
-- Use SQL to create reliable, reusable analytical marts
-- Build Tableau dashboards for stakeholder decision-making
-- Validate data quality, class balance, and feature readiness before ML
-- Train baseline models with transparent evaluation
-- Explain when model accuracy is misleading because of target imbalance
-- Separate analytics outputs from experimental notebook work
-
-The goal is not to make ML look bigger than the analysis. The goal is to show judgment, structure, and business thinking before modeling.
-
----
-
-## Tech Stack
-
-| Layer | Tools |
-|---|---|
-| Data processing | Python, Pandas, NumPy |
-| SQL analytics | DuckDB SQL |
-| Dashboarding | Tableau |
-| Visualization support | Plotly, Matplotlib, Seaborn |
-| Machine learning | Scikit-learn, imbalanced-learn |
-| Model interpretation | Feature importance, SHAP-ready environment |
-| Testing | pytest, pytest-cov |
-| Storage | CSV, Parquet, DuckDB |
-
----
-
-## Data Architecture
-
-The project uses one cleaned analytical layer as the source of truth. SQL marts and Tableau extracts are built from that layer. Notebooks and ML models come after the SQL analysis, not before it.
+The flow is:
 
 ```text
-CDC Chronic Disease Indicators CSV
-  → Python cleaning and preprocessing
-  → processed parquet analytical layer
-  → SQL analytics marts
-  → Tableau dashboard extracts
+Raw CDC data
+  → clean data
+  → SQL analysis
+  → Tableau dashboards
   → notebook feature engineering
-  → ML training and evaluation
-  → model artifacts and interpretation outputs
+  → machine learning
+  → model evaluation
 ```
 
-### Repository layout
+I want the project to feel like real work on a data team. The first deliverable is not a model. The first deliverable is a clear understanding of the data, the business problem, and the patterns that matter.
+
+## Why I built it this way
+
+I wanted this project to show more than model training. A strong data scientist should be able to work through the full path from messy data to business insight.
+
+In this project, I focus on:
+
+1. Asking useful business questions
+2. Creating clean SQL views
+3. Building Tableau dashboards for stakeholders
+4. Checking data quality and class balance
+5. Creating better features in notebooks
+6. Training baseline machine learning models
+7. Explaining why some metrics can be misleading
+
+That is why SQL and Tableau come first. Machine learning is the next step, not the starting point.
+
+## Tools I used
+
+Python for cleaning and notebook work
+
+Pandas and NumPy for data processing
+
+DuckDB SQL for analytics views and Tableau extracts
+
+Tableau for dashboards and business storytelling
+
+Scikit learn for baseline models
+
+imbalanced learn for class imbalance experiments
+
+pytest for testing
+
+Parquet and CSV for reusable data outputs
+
+## Repository layout
 
 ```text
 data/
 ├── raw/
 │   └── U.S._Chronic_Disease_Indicators__CDI_.csv
-│       # Source file from CDC Open Data. Not committed because of size.
+│       Source CDC file. I do not commit this because the file is large.
 ├── processed/
 │   └── cdi_processed.parquet
-│       # Cleaned analytical layer used by SQL, Tableau, notebooks, and ML.
+│       Clean data layer used by SQL, Tableau, notebooks, and models.
 └── analytics/
     └── chronic_disease.duckdb
-        # Optional local SQL database generated from the processed parquet file.
+        Local DuckDB database for SQL analysis.
 
 sql/
 ├── 01_create_analytics_views.sql
-│   # Creates dashboard KPIs, topic trends, state-topic summary,
-│   # mortality analysis, demographic analysis, and ML feature base views.
+│   Creates KPI views, topic trends, state summaries, mortality views,
+│   demographic views, risk distribution, and the ML feature base.
 └── 02_export_tableau_extracts.sql
-    # Exports SQL marts into Tableau-ready CSV files.
+    Exports SQL results into CSV files for Tableau.
 
 tableau/
 ├── README.md
-│   # Dashboard design guide and extract contract.
+│   Dashboard plan and extract guide.
 ├── dashboard_kpis.csv
 ├── topic_year_trends.csv
 ├── state_topic_summary.csv
@@ -118,7 +102,7 @@ tableau/
 
 notebooks/
 └── train_model.py
-    # Notebook-friendly workflow for feature engineering and ML experiments.
+    Notebook style workflow for feature engineering and model training.
 
 reports/
 ├── state_clusters.csv
@@ -134,169 +118,183 @@ reports/
 
 tests/
 └── test_preprocessing.py
-    # Unit tests for preprocessing assumptions and feature engineering logic.
+    Tests for cleaning logic and feature engineering assumptions.
 ```
 
----
+## SQL analysis
 
-## SQL Analytics Layer
+SQL is the center of this project. I use it to create clean analysis tables before I build dashboards or models.
 
-The SQL layer is the core of the project. It converts the cleaned parquet file into stakeholder-ready marts.
+The main SQL file creates:
 
-| SQL object | Purpose |
-|---|---|
-| `analytics.vw_dashboard_kpis` | High-level KPI cards for Tableau |
-| `analytics.mart_topic_year_trends` | Topic-level record volume, average indicator value, and mortality-source rate by year |
-| `analytics.mart_state_topic_summary` | State and topic-level analytical table for maps, heatmaps, and drilldowns |
-| `analytics.mart_risk_distribution` | Risk-level class balance for modeling readiness |
-| `analytics.mart_mortality_by_topic` | Mortality-source concentration by disease topic |
-| `analytics.mart_demographic_risk` | Indicator values by topic and demographic stratification |
-| `analytics.ml_feature_base` | SQL-defined feature base for downstream notebooks and ML |
+1. Dashboard KPI view
+2. Topic and year trend view
+3. State and topic summary view
+4. Risk distribution view
+5. Mortality by topic view
+6. Demographic risk view
+7. Machine learning feature base view
 
-Run the SQL layer after generating `data/processed/cdi_processed.parquet`:
+These views help me answer the core business questions before I start modeling.
 
-```bash
-duckdb data/analytics/chronic_disease.duckdb < sql/01_create_analytics_views.sql
-duckdb data/analytics/chronic_disease.duckdb < sql/02_export_tableau_extracts.sql
+The SQL layer also makes the project easier to review because every dashboard metric has a clear source.
+
+## Tableau dashboards
+
+I designed the Tableau section around three dashboard ideas.
+
+### Dashboard 1: Executive overview
+
+This dashboard gives a quick view of the national chronic disease picture.
+
+It should include:
+
+1. Total records
+2. Number of states
+3. Number of disease topics
+4. First year and latest year in the data
+5. Mortality source rate
+6. Disease topic volume
+7. Topic trends over time
+8. State map by average indicator value
+
+### Dashboard 2: State and topic deep dive
+
+This dashboard helps me compare states and disease topics in more detail.
+
+It should include:
+
+1. State and topic heatmap
+2. State map filtered by selected topic
+3. Ranked state topic table
+4. Mortality source rate by topic
+5. Filters for state, topic, year, and demographic group
+
+### Dashboard 3: Modeling readiness
+
+This dashboard helps me decide whether the data is ready for ML.
+
+It should include:
+
+1. Risk level distribution
+2. Demographic risk comparison
+3. Feature availability checks
+4. Model summary after training
+5. Feature importance after training
+
+I like this dashboard because it connects analytics with machine learning in a practical way.
+
+## Notebook and machine learning phase
+
+After SQL and Tableau, I move into notebooks.
+
+This is where I start asking deeper modeling questions.
+
+1. Can I group states by disease surveillance patterns
+2. Can I predict whether a record is mortality related
+3. Can I classify risk level without being fooled by class imbalance
+4. Which features are driving the model
+5. What extra data would make the model more useful
+
+The current modeling plan includes:
+
+1. KMeans for state segmentation
+2. Logistic Regression for mortality prediction
+3. Random Forest for risk classification
+4. Macro F1 for imbalanced classification
+5. AUC for mortality prediction
+6. Feature importance for model interpretation
+
+I do not treat raw accuracy as the main success metric because the risk target is highly imbalanced.
+
+## Feature engineering roadmap
+
+This is the part I am most excited to improve next.
+
+I want to add:
+
+1. State year population data for better per capita comparisons
+2. Rolling averages by state and disease topic
+3. Year over year change features
+4. Region and census division features
+5. Demographic stratification features
+6. Better risk thresholds
+7. SHAP analysis for model explanation
+8. Time based validation instead of random splits
+
+These steps would make the project stronger and much closer to a real data science workflow.
+
+## What I want this project to show
+
+I want this repo to show that I can do more than train a model.
+
+I can take a large dataset, shape it into an analysis layer, build SQL views, create Tableau dashboards, and then use the same foundation for machine learning.
+
+The project shows:
+
+1. Business thinking
+2. SQL analysis
+3. Dashboard planning
+4. Data quality awareness
+5. Feature engineering
+6. Baseline modeling
+7. Honest model evaluation
+
+That is the story I want this project to tell.
+
+## How to run the project
+
+Clone the repo from GitHub.
+
+Install the Python packages from the requirements file.
+
+Place the CDC file here:
+
+```text
+data/raw/U.S._Chronic_Disease_Indicators__CDI_.csv
 ```
 
----
-
-## Tableau Dashboard Plan
-
-The Tableau layer is designed as the first major deliverable, before the ML notebook.
-
-### Dashboard 1: Executive Public Health Overview
-
-**Purpose:** summarize national chronic disease surveillance patterns for non-technical stakeholders.
-
-Recommended views:
-
-- KPI cards for total records, states, topics, year range, and mortality-source rate
-- Bar chart of surveillance volume by chronic disease topic
-- Line chart of topic trends over time
-- U.S. state map using average indicator value
-- Topic and year filters for interactive exploration
-
-### Dashboard 2: State and Topic Deep Dive
-
-**Purpose:** help analysts identify state-topic combinations that need deeper investigation.
-
-Recommended views:
-
-- State-topic heatmap
-- State map by selected topic
-- Ranked table of highest average indicator values
-- Mortality-source rate by topic
-- Drilldown filters for state, topic, year, and stratification group
-
-### Dashboard 3: Modeling Readiness and Risk Signals
-
-**Purpose:** show whether the data is ready for ML and where modeling risk exists.
-
-Recommended views:
-
-- Risk-level distribution chart
-- Demographic indicator comparison
-- Feature availability summary
-- Model metric cards after training
-- Feature importance chart after training
-
----
-
-## Notebook and Machine Learning Phase
-
-The notebook phase starts only after SQL analysis and Tableau dashboards establish the business context.
-
-Current ML tasks:
-
-| Task | Method | Business purpose |
-|---|---|---|
-| State segmentation | K-Means clustering | Group states by disease surveillance profile |
-| Mortality prediction | Logistic Regression | Estimate whether a record is mortality-source related |
-| Risk classification | Random Forest | Classify records into risk tiers with imbalance-aware evaluation |
-
-Model evaluation focuses on metrics that match the data problem:
-
-- AUC for mortality prediction
-- Macro F1 for imbalanced risk classification
-- Weighted F1 as a secondary metric
-- Feature importance for model interpretation
-- Risk distribution checks before trusting classification metrics
-
-Raw accuracy is not treated as a success metric when the target is imbalanced.
-
----
-
-## Feature Engineering Roadmap
-
-The next modeling iteration should prioritize better analytical features before trying more complex models.
-
-| Feature area | Improvement |
-|---|---|
-| Population normalization | Join state-year population denominators to create per-capita indicators |
-| Temporal features | Add lag values, rolling averages, and year-over-year changes |
-| State context | Add region, census division, and rural-urban grouping |
-| Topic severity | Replace simple risk bins with clinically or statistically justified thresholds |
-| Demographics | Create stratification-level features for gender and race or ethnicity |
-| Model interpretation | Add SHAP analysis after the baseline Random Forest |
-
----
-
-## Key Analytical Insights to Validate
-
-These are the claims the SQL and Tableau layers should validate before finalizing the ML narrative:
-
-1. Surveillance volume varies heavily by disease topic, which means raw counts should not be treated as disease burden by default.
-2. Some states may appear low-risk because of lower surveillance volume, not because of better public health outcomes.
-3. Mortality-related records are not evenly distributed across topics.
-4. Risk-level classification is affected by severe class imbalance, so macro F1 is more useful than raw accuracy.
-5. Feature engineering should include population denominators before making strong burden comparisons across states.
-
----
-
-## How to Run
+Generate the cleaned data layer.
 
 ```bash
-git clone https://github.com/vanle2000/Chronic-disease-risks-in-US.git
-cd Chronic-disease-risks-in-US
-pip install -r requirements.txt
-
-# Place CDC file here:
-# data/raw/U.S._Chronic_Disease_Indicators__CDI_.csv
-
-# 1. Generate the cleaned analytical layer
 python src/data/preprocessing.py
+```
 
-# 2. Build SQL marts and Tableau extracts
+Create the SQL views.
+
+```bash
 duckdb data/analytics/chronic_disease.duckdb < sql/01_create_analytics_views.sql
+```
+
+Export Tableau files.
+
+```bash
 duckdb data/analytics/chronic_disease.duckdb < sql/02_export_tableau_extracts.sql
+```
 
-# 3. Open Tableau and connect to the CSV files in tableau/
+Open Tableau and connect to the CSV files inside the Tableau folder.
 
-# 4. Continue to notebooks and ML
+Continue to notebook modeling.
+
+```bash
 python notebooks/train_model.py
 ```
 
----
+## Next steps
 
-## Project Positioning
+I plan to keep improving this project in a few areas.
 
-This project is best presented as an analytics-to-ML case study:
+1. Add more SQL data quality checks
+2. Build and publish the Tableau dashboards
+3. Add state year population data
+4. Improve feature engineering in notebooks
+5. Add time based validation
+6. Compare imbalance handling methods
+7. Add SHAP based model interpretation
+8. Clean up the run flow so the repo is easier to reproduce
 
-> I used SQL to build trusted analytical marts, Tableau to communicate chronic disease patterns to stakeholders, and Python notebooks to extend the analysis into feature engineering and baseline machine learning models.
+## Final note
 
-That framing is stronger than presenting it as a model-first project because it shows business judgment, technical execution, and awareness of modeling limitations.
+I built this project to show how I approach a data problem from beginning to end. I care about the analysis first, because a model is only useful when the data story makes sense.
 
----
-
-## Future Improvements
-
-| Area | Improvement Path |
-|---|---|
-| SQL | Add data quality checks, null-rate profiling, and query tests |
-| Tableau | Publish interactive dashboards with documented stakeholder questions |
-| Feature engineering | Add Census population joins for per-capita normalization |
-| Modeling | Add temporal validation instead of random cross-validation |
-| Imbalance handling | Compare class weights, SMOTE, anomaly detection, and threshold tuning |
-| Deployment | Package SQL marts and notebooks into a reproducible pipeline |
+This repo is my way of showing that I can work across SQL, Tableau, Python, and machine learning with a clear business goal in mind.
