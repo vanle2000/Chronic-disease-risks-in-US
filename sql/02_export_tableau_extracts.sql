@@ -1,5 +1,4 @@
 -- Tableau extract exports
--- Run after sql/01_create_analytics_views.sql
 
 COPY analytics.vw_dashboard_kpis
 TO 'tableau/dashboard_kpis.csv'
