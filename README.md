@@ -1,27 +1,14 @@
-# Chronic Disease Risk Analytics in the U.S.
+# Population Health Intervention Prioritization Platform
 
-I built this project to explore chronic disease risk across the United States using SQL, Tableau, and machine learning. I want to turn a large public health dataset into clear insights that a stakeholder can actually use.
+DuckDB SQL, Python, Tableau, machine learning, and experimental design for prioritizing chronic disease interventions.
 
-## What I am trying to answer
+## Objective:
 
-I use the CDC Chronic Disease Indicators data to answer practical public health questions.
+A national public-health team has limited funding for chronic disease prevention programs. The team needs to identify which state, disease topic, and demographic segments should receive intervention resources first. This project builds an analytics platform that ranks intervention opportunities, explains risk drivers, evaluates data quality, and proposes an experimental design to measure intervention impact. This decision-support analytics platform also uses for prioritizing chronic disease interventions across U.S. states, disease topics, and demographic groups.
 
-1. Which chronic disease topics show the most activity across the country
-2. Which states and topics need closer attention
-3. How do disease indicators change over time
-4. Which topics are most connected to mortality related records
-5. Which demographic groups show higher average indicator values
-6. Is the data ready for machine learning or does it need more feature work first
+Using CDC Chronic Disease Indicators data, I created a cleaned analytical data layer, SQL-based reporting marts, Tableau-ready extracts, and Python ML baselines. The core output is an Intervention Priority Score that ranks state-topic-demographic segments based on disease burden, mortality signal, trend growth, demographic disparity, and data reliability.
 
-In this project, I focus on:
-
-1. Asking useful questions based on the data analytics 
-2. Creating clean SQL views
-3. Building Tableau dashboards 
-4. Checking data quality and class balance
-5. Creating better features in notebooks
-6. Training baseline machine learning models
-7. Explaining why some metrics can be misleading
+The project also includes an experimental design for measuring whether future interventions reduce disease risk using matched cohorts or difference-in-differences.
 
 ## Tools I used
 
@@ -41,53 +28,90 @@ pytest for testing
 
 Parquet and CSV for reusable data outputs
 
+## Metric I use:
+Intervention Priority Score =
+    35% disease burden
+  + 25% mortality signal
+  + 20% year-over-year growth
+  + 10% demographic disparity
+  + 10% data reliability
+
+#### guardrail metrics: 
+Data coverage rate
+Missingness rate
+Demographic coverage
+Metric volatility
+Model calibration
+False-positive intervention risk
+False-negative missed-risk risk
+
+
 ## Repository layout
 
-```text
-data/
-├── raw/
-│   └── U.S._Chronic_Disease_Indicators__CDI_.csv
-├── processed/
-│   └── cdi_processed.parquet #Clean data layer used by SQL, Tableau, notebooks, and models.
-└── analytics/
-    └── chronic_disease.duckdb #Local DuckDB database for SQL analysis.
-
-sql/
-├── 01_create_analytics_views.sql
-│   Creates KPI views, topic trends, state summaries, mortality views,
-│   demographic views, risk distribution, and the ML feature base.
-└── 02_export_tableau_extracts.sql
-    Exports SQL results into CSV files for Tableau.
-
-tableau/
+Chronic-disease-risks-in-US/
 ├── README.md
-│   Dashboard plan and extract guide.
-├── dashboard_kpis.csv
-├── topic_year_trends.csv
-├── state_topic_summary.csv
-├── risk_distribution.csv
-├── mortality_by_topic.csv
-└── demographic_risk.csv
-
-notebooks/
-└── train_model.py #For feature engineering and model training.
-
-reports/
-├── state_clusters.csv
-├── feature_importances.csv
-├── model_summary.csv
-└── figures/
-    ├── topic_distribution.png
-    ├── topic_trends.png
-    ├── state_year_heatmap.png
-    ├── demographic_breakdown.png
-    ├── risk_level_imbalance.png
-    └── feature_importance_Random_Forest.png
-
-tests/
-└── test_preprocessing.py # Tests for cleaning logic and feature engineering assumptions.
-```
-
+├── EXECUTIVE_SUMMARY.md
+├── CASE_STUDY.md
+├── requirements.txt
+├── Makefile
+│
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   ├── analytics/
+│   └── external/
+│
+sql/
+├── 00_create_database.sql
+├── 01_staging_cdi_observations.sql
+├── 02_mart_state_topic_year.sql
+├── 03_mart_demographic_disparity.sql
+├── 04_mart_intervention_priority.sql
+├── 05_mart_data_quality.sql
+├── 06_ml_feature_store.sql
+└── 07_export_tableau_extracts.sql
+│
+├── src/
+│   ├── data/
+│   │   ├── preprocessing.py
+│   │   ├── validation.py
+│   │   └── feature_engineering.py
+│   ├── metrics/
+│   │   └── intervention_priority.py
+│   ├── modeling/
+│   │   ├── mortality_prediction.py
+│   │   ├── risk_classification.py
+│   │   ├── state_segmentation.py
+│   │   └── evaluation.py
+│   └── experiments/
+│       ├── power_analysis.py
+│       └── diff_in_diff_simulation.py
+│
+├── notebooks/
+│   ├── 01_metric_design.ipynb
+│   ├── 02_sql_validation.ipynb
+│   ├── 03_modeling_baselines.ipynb
+│   ├── 04_experiment_design.ipynb
+│   └── 05_stakeholder_readout.ipynb
+│
+├── tableau/
+│   ├── README.md
+│   ├── dashboard_specs.md
+│   ├── extracts/
+│   └── screenshots/
+│
+├── reports/
+│   ├── stakeholder_recommendations.md
+│   ├── experiment_design.md
+│   ├── model_card.md
+│   ├── data_quality_report.md
+│   └── limitations.md
+│
+└── tests/
+    ├── test_preprocessing.py
+    ├── test_metrics.py
+    ├── test_model_inputs.py
+    └── test_sql_outputs.py
 ## SQL analysis
 
 The main SQL file creates:
