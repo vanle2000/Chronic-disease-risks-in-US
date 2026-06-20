@@ -2,7 +2,7 @@
 
 DuckDB SQL, Python, Tableau, machine learning, and experimental design for prioritizing chronic disease interventions.
 
-## Objective:
+## Objectives:
 
 A national public-health team has limited funding for chronic disease prevention programs. The team needs to identify which state, disease topic, and demographic segments should receive intervention resources first. This project builds an analytics platform that ranks intervention opportunities, explains risk drivers, evaluates data quality, and proposes an experimental design to measure intervention impact. This decision-support analytics platform also uses for prioritizing chronic disease interventions across U.S. states, disease topics, and demographic groups.
 
@@ -26,7 +26,11 @@ imbalanced learn for class imbalance experiments
 
 pytest for testing
 
-Parquet and CSV for reusable data outputs
+Parquet and CSV for reusable data outputs: The raw CDC file is stored as CSV because that is the original public-data format. After cleaning, the project writes the analytical dataset to Parquet. I chose Parquet because it is a columnar, compressed, schema-aware format that works well for analytical workloads. This project repeatedly scans subsets of columns for SQL marts, Tableau extracts, and machine-learning features. Parquet reduces storage overhead, preserves column types better than CSV, and can be queried directly by DuckDB without loading the full dataset into memory.
+
+This design creates a reusable analytical layer:
+
+Raw CSV → Cleaned Parquet → DuckDB SQL marts → Tableau extracts → ML feature tables.
 
 ## Metric I use:
 Intervention Priority Score =
