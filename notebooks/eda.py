@@ -11,7 +11,7 @@ import seaborn as sns
 from scipy import stats
 
 logger = logging.getLogger(__name__)
-FIGURES_DIR = pathlib.Path(__file__).parents[2] / "reports" / "figures"
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1]
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
 sns.set_theme(style="whitegrid", palette="muted")
