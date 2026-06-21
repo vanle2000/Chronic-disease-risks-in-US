@@ -21,8 +21,6 @@ from sklearn.metrics import (
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.utils.class_weight import compute_class_weight
-from imblearn.over_sampling import SMOTE
 
 logger = logging.getLogger(__name__)
 
