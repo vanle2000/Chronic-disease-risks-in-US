@@ -63,17 +63,7 @@ Chronic-disease-risks-in-US/
 │   ├── raw/
 │   ├── processed/
 │   ├── analytics/
-│   └── external/
-│
-sql/
-├── 00_create_database.sql
-├── 01_staging_cdi_observations.sql
-├── 02_mart_state_topic_year.sql
-├── 03_mart_demographic_disparity.sql
-├── 04_mart_intervention_priority.sql
-├── 05_mart_data_quality.sql
-├── 06_ml_feature_store.sql
-└── 07_export_tableau_extracts.sql
+│   └── sample/
 │
 ├── src/
 │   ├── data/
@@ -83,20 +73,29 @@ sql/
 │   ├── metrics/
 │   │   └── intervention_priority.py
 │   ├── modeling/
+│   │   ├── state_segmentation.py
 │   │   ├── mortality_prediction.py
 │   │   ├── risk_classification.py
-│   │   ├── state_segmentation.py
 │   │   └── evaluation.py
 │   └── experiments/
 │       ├── power_analysis.py
-│       └── diff_in_diff_simulation.py
+│       └── diff_in_diff_design.py
 │
-├── notebooks/
-│   ├── 01_metric_design.ipynb
-│   ├── 02_sql_validation.ipynb
-│   ├── 03_modeling_baselines.ipynb
-│   ├── 04_experiment_design.ipynb
-│   └── 05_stakeholder_readout.ipynb
+├── sql/
+│   ├── 00_create_schema.sql
+│   ├── 01_staging_cdi_observations.sql
+│   ├── 02_mart_state_topic_year.sql
+│   ├── 03_mart_demographic_disparity.sql
+│   ├── 04_mart_intervention_priority.sql
+│   ├── 05_mart_data_quality.sql
+│   ├── 06_ml_feature_store.sql
+│   └── 07_export_tableau_extracts.sql
+│
+├── scripts/
+│   ├── run_preprocessing.py
+│   ├── run_sql_pipeline.py
+│   ├── run_modeling.py
+│   └── run_all.py
 │
 ├── tableau/
 │   ├── README.md
@@ -109,13 +108,18 @@ sql/
 │   ├── experiment_design.md
 │   ├── model_card.md
 │   ├── data_quality_report.md
-│   └── limitations.md
+│   ├── limitations.md
+│   └── figures/
 │
 └── tests/
     ├── test_preprocessing.py
+    ├── test_feature_engineering.py
     ├── test_metrics.py
-    ├── test_model_inputs.py
+    ├── test_modeling.py
+    ├── test_experiments.py
     └── test_sql_outputs.py
+
+    
 ## SQL analysis
 
 The main SQL file creates:
