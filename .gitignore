@@ -1,0 +1,26 @@
+# Data — never committed. Rebuild via `make ingest`.
+data/raw/
+data/processed/
+data/analytics/
+*.duckdb
+*.duckdb.wal
+*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets
+.env
+credentials.json
+service-account*.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

@@ -9,7 +9,7 @@ import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).parents[1]))
 
-from src.models.train import build_state_disease_matrix, cluster_states
+from src.modeling.train import build_state_disease_matrix, cluster_states
 
 
 def _make_state_df(n_states: int = 20, n_records: int = 500) -> pd.DataFrame:
