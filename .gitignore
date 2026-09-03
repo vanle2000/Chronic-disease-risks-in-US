@@ -1,7 +1,7 @@
-# Data — never committed. Rebuild via `make ingest`.
-data/raw/
-data/processed/
-data/analytics/
+# Data and derived state — never committed. Rebuild via `make ingest`.
+# _state/ holds the ingestion watermark: it is derived, would conflict on
+# every merge, and would misrepresent what a fresh clone actually holds.
+data/
 *.duckdb
 *.duckdb.wal
 *.parquet
