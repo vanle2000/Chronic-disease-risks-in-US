@@ -1,0 +1,9 @@
+# Normalise line endings so diffs stay readable across Windows and CI.
+* text=auto eol=lf
+
+# Notebooks are noisy in diffs; treat archived ones as binary.
+archive/*.ipynb binary
+*.ipynb diff=jupyter
+
+# Keep generated extracts out of language statistics.
+tableau/extracts/*.csv linguist-generated=true
